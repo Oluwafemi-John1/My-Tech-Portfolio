@@ -217,18 +217,16 @@ function ProjectsTab() {
   const [projects, setProjects] = useState([]);
   const [loading,  setLoading]  = useState(true);
   const [modal,    setModal]    = useState(null); // null | 'add' | projectObj
-  const [tick,     setTick]     = useState(0);   // increment to trigger re-fetch
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
     fetch(`${API_BASE}/api/projects`)
       .then((r) => r.json())
       .then((data) => { if (!cancelled) setProjects(data); })
       .catch(() => {})
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [tick]);
+  }, []);
 
   const handleSaved = (saved) => {
     setProjects((prev) => {
