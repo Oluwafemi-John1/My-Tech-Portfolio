@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+/* ── Windows 11 Design Tokens ────────────────────────────────────────── */
+:root {
+  --win-bg:       #0078D4;               /* taskbar / accent blue        */
+  --win-taskbar:  rgba(32, 32, 32, 0.85);/* frosted taskbar              */
+  --win-glass:    rgba(255, 255, 255, 0.08); /* glass surface tint       */
+  --win-border:   rgba(255, 255, 255, 0.12); /* glass border             */
+
+  /* typography */
+  font-family: 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Reset ───────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}

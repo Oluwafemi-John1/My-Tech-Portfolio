@@ -1,0 +1,47 @@
+import { AnimatePresence } from 'framer-motion';
+import { useWindow }        from '../../hooks/useWindow';
+import { WindowFrame }      from './WindowFrame';
+import { AboutWindow }      from './AboutWindow';
+import { SkillsWindow }     from './SkillsWindow';
+import { ResumeWindow }     from './ResumeWindow';
+import { Z }                from '../../utils/zIndex';
+
+/**
+ * CONTENT_MAP — maps window id → the JSX content rendered inside its frame.
+ * Add new window content components here as they are built.
+ */
+const CONTENT_MAP = {
+  about:  <AboutWindow />,
+  skills: <SkillsWindow />,
+  resume: <ResumeWindow />,
+  // projects, contact — added in future phases
+};
+
+/**
+ * WindowManager
+ * Reads the windows[] array from context and renders a WindowFrame for
+ * every window that is open and not minimized.
+ *
+ * The fixed container is pointer-events-none so clicks on empty desktop
+ * areas pass through; each WindowFrame re-enables pointer-events.
+ */
+export function WindowManager() {
+  const { windows } = useWindow();
+
+  const visible = windows.filter((w) => w.isOpen && !w.isMinimized);
+
+  return (
+    <div
+      className="fixed inset-0 pointer-events-none"
+      style={{ zIndex: Z.window }}
+    >
+      <AnimatePresence>
+        {visible.map((win) => (
+          <WindowFrame key={win.id} win={win}>
+            {CONTENT_MAP[win.id] ?? null}
+          </WindowFrame>
+        ))}
+      </AnimatePresence>
+    </div>
+  );
+}
