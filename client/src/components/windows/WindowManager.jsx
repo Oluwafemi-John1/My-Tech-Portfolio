@@ -4,17 +4,19 @@ import { WindowFrame }      from './WindowFrame';
 import { AboutWindow }      from './AboutWindow';
 import { SkillsWindow }     from './SkillsWindow';
 import { ResumeWindow }     from './ResumeWindow';
+import { ProjectsWindow }   from './ProjectsWindow';
+import { ContactWindow }    from './ContactWindow';
 import { Z }                from '../../utils/zIndex';
 
 /**
  * CONTENT_MAP — maps window id → the JSX content rendered inside its frame.
- * Add new window content components here as they are built.
  */
 const CONTENT_MAP = {
-  about:  <AboutWindow />,
-  skills: <SkillsWindow />,
-  resume: <ResumeWindow />,
-  // projects, contact — added in future phases
+  about:    <AboutWindow />,
+  skills:   <SkillsWindow />,
+  resume:   <ResumeWindow />,
+  projects: <ProjectsWindow />,
+  contact:  <ContactWindow />,
 };
 
 /**

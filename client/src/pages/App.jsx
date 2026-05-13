@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 
-import { WindowProvider } from '../context/WindowContext';
-import { ThemeProvider }  from '../context/ThemeContext';
+import { WindowProvider }       from '../context/WindowContext';
+import { ThemeProvider }        from '../context/ThemeContext';
+import { NotificationProvider } from '../context/NotificationContext';
 
 // Boot / lock
 import { BootScreen }  from '../components/boot/BootScreen';
@@ -37,6 +38,7 @@ export default function App() {
 
   return (
     <ThemeProvider>
+      <NotificationProvider>
       <WindowProvider>
         {/* ── Boot / Lock overlay layers (AnimatePresence handles exit animations) ── */}
         <AnimatePresence>
@@ -68,6 +70,7 @@ export default function App() {
         <NotificationCenter />
         <Toast />
       </WindowProvider>
+      </NotificationProvider>
     </ThemeProvider>
   );
 }

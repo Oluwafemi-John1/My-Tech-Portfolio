@@ -17,23 +17,26 @@ function getTransporter() {
 }
 
 exports.sendMessage = async (req, res) => {
-  const { name, email, message } = req.body;
+  const { name, email, subject, message } = req.body;
 
-  if (!name || !email || !message) {
-    return res.status(400).json({ message: 'name, email and message are required' });
+  if (!name || !email || !subject || !message) {
+    return res.status(400).json({ message: 'name, email, subject and message are required' });
   }
 
   try {
-    const doc = await Message.create({ name, email, message });
+    const doc = await Message.create({ name, email, subject, message });
 
     // Fire-and-forget email notification — never blocks the response
     getTransporter()
       .sendMail({
         from:    `"Portfolio Contact" <${process.env.EMAIL_USER}>`,
         to:      process.env.EMAIL_USER,
-        subject: `New message from ${name}`,
-        html:    `<p><strong>From:</strong> ${name} &lt;${email}&gt;</p>
-                  <p><strong>Message:</strong></p>
+        subject: `Portfolio Contact: ${subject}`,
+        text:    `Name:    ${name}\nEmail:   ${email}\nSubject: ${subject}\n\n${message}`,
+        html:    `<p><strong>Name:</strong> ${name}</p>
+                  <p><strong>Email:</strong> ${email}</p>
+                  <p><strong>Subject:</strong> ${subject}</p>
+                  <hr/>
                   <p>${message.replace(/\n/g, '<br>')}</p>`,
       })
       .catch((err) => console.error('Email notification error:', err.message));
