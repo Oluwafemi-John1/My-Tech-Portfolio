@@ -45,7 +45,7 @@ const WINDOW_ICONS = {
 // ── Windows logo (4-pane) for the Start button ──────────────────
 function WinLogo() {
   return (
-    <div className="grid grid-cols-2 gap-[2px] w-4 h-4">
+    <div className="grid grid-cols-2 gap-0.5 w-4 h-4">
       <div className="rounded-[1px]" style={{ background: '#F25022' }} />
       <div className="rounded-[1px]" style={{ background: '#7FBA00' }} />
       <div className="rounded-[1px]" style={{ background: '#00A4EF' }} />

@@ -61,8 +61,8 @@ export function TaskbarIcon({ id, label, icon, isOpen, isFocused }) {
       {isOpen && (
         <span
           className={[
-            'absolute bottom-0.5 rounded-full h-[3px] transition-all duration-150',
-            isFocused ? 'w-4 bg-[var(--win-bg)]' : 'w-2 bg-white/50',
+            'absolute bottom-0.5 rounded-full h-0.75 transition-all duration-150',
+            isFocused ? 'w-4 bg-(--win-bg)' : 'w-2 bg-white/50',
           ].join(' ')}
         />
       )}

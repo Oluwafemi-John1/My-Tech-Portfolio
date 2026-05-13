@@ -45,13 +45,13 @@ export function RightClickMenu({ x, y, onClose }) {
         border: '1px solid var(--win-border)',
         zIndex: 9999,
       }}
-      className="rounded-lg shadow-2xl py-1 min-w-[180px]"
+      className="rounded-lg shadow-2xl py-1 min-w-45"
     >
       {MENU_ITEMS.map((item, i) => (
         <button
           key={item}
           onClick={onClose}
-          className="w-full text-left text-white/90 text-[12px] px-4 py-[7px]
+          className="w-full text-left text-white/90 text-[12px] px-4 py-1.75
                      hover:bg-white/10 transition-colors rounded-sm"
         >
           {item}

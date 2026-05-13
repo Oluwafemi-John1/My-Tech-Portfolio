@@ -106,11 +106,11 @@ export function StartMenu() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 16 }}
             transition={{ duration: 0.2, ease: [0.2, 0, 0, 1] }}
-            className="fixed bottom-[52px] left-0 right-0 flex justify-center pointer-events-none"
+            className="fixed bottom-13 left-0 right-0 flex justify-center pointer-events-none"
             style={{ zIndex: Z.startMenu }}
           >
             <div
-              className="w-[620px] rounded-xl overflow-hidden shadow-2xl pointer-events-auto"
+              className="w-155 rounded-xl overflow-hidden shadow-2xl pointer-events-auto"
               style={{
                 background:          'rgba(24, 24, 28, 0.88)',
                 backdropFilter:      'blur(40px)',

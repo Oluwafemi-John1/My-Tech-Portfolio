@@ -9,7 +9,7 @@ export function Clock() {
   return (
     <div className="flex flex-col items-end justify-center leading-none select-none cursor-default px-2">
       <span className="text-white text-[11px] font-medium">{time}</span>
-      <span className="text-white/70 text-[11px] mt-[2px]">{shortDate}</span>
+      <span className="text-white/70 text-[11px] mt-0.5">{shortDate}</span>
     </div>
   );
 }

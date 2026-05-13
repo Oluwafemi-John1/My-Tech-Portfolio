@@ -33,8 +33,8 @@ export function DesktopIcon({ id, label, icon, onOpen }) {
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.97 }}
       className={[
-        'flex flex-col items-center gap-1 p-2 rounded-lg w-[80px]',
-        'text-white text-[11px] text-center break-words cursor-default select-none',
+        'flex flex-col items-center gap-1 p-2 rounded-lg w-20',
+        'text-white text-[11px] text-center wrap-break-word cursor-default select-none',
         'transition-colors focus:outline-none',
         selected ? 'bg-white/20' : 'hover:bg-white/10',
       ].join(' ')}

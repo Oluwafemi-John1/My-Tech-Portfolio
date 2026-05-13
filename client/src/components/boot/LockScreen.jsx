@@ -13,7 +13,7 @@ export function LockScreen({ onUnlock }) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-[900] flex flex-col items-center justify-between py-20 cursor-pointer select-none"
+      className="fixed inset-0 z-900 flex flex-col items-center justify-between py-20 cursor-pointer select-none"
       style={{
         background:
           'radial-gradient(ellipse at 50% 30%, #0a2a6e 0%, #050d1f 70%, #000 100%)',

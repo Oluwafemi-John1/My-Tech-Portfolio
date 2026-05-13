@@ -158,7 +158,7 @@ export function WindowFrame({ win, children }) {
         {/* Left: icon + title */}
         <div className="flex items-center gap-2 min-w-0 overflow-hidden">
           {win.icon && (
-            <span className="w-4 h-4 flex-shrink-0 flex items-center justify-center text-white">
+            <span className="w-4 h-4 shrink-0 flex items-center justify-center text-white">
               {win.icon}
             </span>
           )}
@@ -169,7 +169,7 @@ export function WindowFrame({ win, children }) {
 
         {/* Right: control buttons — stop drag propagation */}
         <div
-          className="flex items-center flex-shrink-0 -mr-3 ml-4"
+          className="flex items-center shrink-0 -mr-3 ml-4"
           onMouseDown={(e) => e.stopPropagation()}
         >
           {/* Minimize */}

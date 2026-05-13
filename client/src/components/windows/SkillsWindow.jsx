@@ -56,7 +56,7 @@ function SkillRow({ skill, index, filterKey }) {
       </span>
 
       {/* Track */}
-      <div className="flex-1 h-[6px] rounded-full bg-white/10 overflow-hidden relative">
+      <div className="flex-1 h-1.5 rounded-full bg-white/10 overflow-hidden relative">
         {/* Animated fill — key forces re-animation when filter changes */}
         <motion.div
           key={`${skill.name}-${filterKey}`}

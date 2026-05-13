@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 
 const API_BASE  = import.meta.env.VITE_API_URL ?? 'http://localhost:5000';
 const TOKEN_KEY = 'admin_token';
@@ -104,7 +104,7 @@ function LoginPanel({ onLogin }) {
         <span className="text-white/60 text-[13px] font-medium">Admin Access</span>
       </div>
 
-      <form onSubmit={submit} className="flex flex-col gap-3 w-full max-w-[260px]">
+      <form onSubmit={submit} className="flex flex-col gap-3 w-full max-w-65">
         <Input label="Username" type="text" value={username}
           onChange={(e) => setUsername(e.target.value)} placeholder="admin" autoFocus />
         <Input label="Password" type="password" value={password}
@@ -178,7 +178,7 @@ function ProjectModal({ project, onClose, onSaved }) {
           </button>
         </div>
 
-        <form onSubmit={save} className="flex flex-col gap-2.5 overflow-y-auto max-h-[360px] pr-1">
+        <form onSubmit={save} className="flex flex-col gap-2.5 overflow-y-auto max-h-90 pr-1">
           <Input label="Title *" value={form.title} onChange={(e) => set('title', e.target.value)} />
           <Textarea label="Description" value={form.description}
             onChange={(e) => set('description', e.target.value)} />
@@ -217,18 +217,18 @@ function ProjectsTab() {
   const [projects, setProjects] = useState([]);
   const [loading,  setLoading]  = useState(true);
   const [modal,    setModal]    = useState(null); // null | 'add' | projectObj
+  const [tick,     setTick]     = useState(0);   // increment to trigger re-fetch
 
-  const load = useCallback(async () => {
+  useEffect(() => {
+    let cancelled = false;
     setLoading(true);
-    try {
-      const res = await fetch(`${API_BASE}/api/projects`);
-      setProjects(await res.json());
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => { load(); }, [load]);
+    fetch(`${API_BASE}/api/projects`)
+      .then((r) => r.json())
+      .then((data) => { if (!cancelled) setProjects(data); })
+      .catch(() => {})
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [tick]);
 
   const handleSaved = (saved) => {
     setProjects((prev) => {
@@ -290,8 +290,8 @@ function ProjectsTab() {
               {projects.map((p) => (
                 <tr key={p._id} className="hover:bg-white/4 transition-colors"
                   style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                  <td className="px-3 py-2 text-white/75 max-w-[160px] truncate">{p.title}</td>
-                  <td className="px-3 py-2 text-white/45 max-w-[180px] truncate">
+                  <td className="px-3 py-2 text-white/75 max-w-40 truncate">{p.title}</td>
+                  <td className="px-3 py-2 text-white/45 max-w-45 truncate">
                     {(p.techStack ?? []).slice(0, 3).join(', ')}
                     {(p.techStack?.length ?? 0) > 3 ? '…' : ''}
                   </td>
@@ -440,9 +440,9 @@ function MessagesTab() {
             <tr key={m._id}
               className={`hover:bg-white/4 transition-colors ${!m.read ? 'text-white/80' : 'text-white/45'}`}
               style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-              <td className="px-3 py-2 max-w-[100px] truncate">{m.name}</td>
-              <td className="px-3 py-2 max-w-[140px] truncate text-white/45">{m.email}</td>
-              <td className="px-3 py-2 max-w-[140px] truncate">{m.subject}</td>
+              <td className="px-3 py-2 max-w-25 truncate">{m.name}</td>
+              <td className="px-3 py-2 max-w-35 truncate text-white/45">{m.email}</td>
+              <td className="px-3 py-2 max-w-35 truncate">{m.subject}</td>
               <td className="px-3 py-2 text-white/35 whitespace-nowrap">
                 {new Date(m.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' })}
               </td>
