@@ -13,6 +13,7 @@ export const WINDOW_REGISTRY = {
   skills:   { title: 'Skills.txt', size: { width: 500, height: 420 } },
   resume:   { title: 'Resume.pdf', size: { width: 560, height: 500 } },
   contact:  { title: 'Contact.lnk', size: { width: 480, height: 460 } },
+  admin:    { title: 'Admin Panel',  size: { width: 700, height: 520 } },
 };
 
 function makeWindow(id, title, icon, zIndex, cascade = 0, defaultSize = DEFAULT_SIZE) {

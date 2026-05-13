@@ -48,7 +48,7 @@ export function Taskbar() {
 
       {/* ── Open-window icons ──────────────────────────── */}
       <div className="flex-1 flex items-center justify-center gap-1">
-        {windows.map((w) => (
+        {windows.filter((w) => w.id !== 'admin').map((w) => (
           <TaskbarIcon
             key={w.id}
             id={w.id}

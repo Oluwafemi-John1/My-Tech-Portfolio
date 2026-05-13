@@ -6,6 +6,7 @@ import { SkillsWindow }     from './SkillsWindow';
 import { ResumeWindow }     from './ResumeWindow';
 import { ProjectsWindow }   from './ProjectsWindow';
 import { ContactWindow }    from './ContactWindow';
+import { AdminWindow }      from './AdminWindow';
 import { Z }                from '../../utils/zIndex';
 
 /**
@@ -17,6 +18,7 @@ const CONTENT_MAP = {
   resume:   <ResumeWindow />,
   projects: <ProjectsWindow />,
   contact:  <ContactWindow />,
+  admin:    <AdminWindow />,
 };
 
 /**

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 
 import { WindowProvider }       from '../context/WindowContext';
@@ -21,6 +21,23 @@ import { StartMenu } from '../components/startmenu/StartMenu';
 
 // Taskbar
 import { Taskbar } from '../components/taskbar/Taskbar';
+
+// Keyboard shortcut listener (must live inside WindowProvider)
+import { useWindow } from '../hooks/useWindow';
+function AppShortcuts() {
+  const { openWindow } = useWindow();
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+        e.preventDefault();
+        openWindow('admin');
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [openWindow]);
+  return null;
+}
 
 // Notification layer
 import { NotificationCenter } from '../components/notifications/NotificationCenter';
@@ -61,6 +78,9 @@ export default function App() {
 
         {/* Layer 3 – draggable application windows */}
         <WindowManager />
+
+        {/* Keyboard shortcuts (Ctrl+Shift+A → Admin) */}
+        <AppShortcuts />
 
         {/* Layer 4 – start menu overlay */}
         <StartMenu />
