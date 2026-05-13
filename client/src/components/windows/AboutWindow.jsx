@@ -1,15 +1,5 @@
 import { motion } from 'framer-motion';
-
-// ── Local config — replaced with API call in Phase 3 ──────────────────────────
-const config = {
-  name:     'Oluwafemi Oyeniran',
-  bio:      'Full-stack developer passionate about building beautiful, performant web experiences. Specialising in React, Node.js, and modern UI systems.',
-  status:   'Tech portfolio',
-  avatar:   '/placeholder.jpg',
-  github:   'https://github.com',
-  linkedin: 'https://linkedin.com',
-  twitter:  'https://twitter.com',
-};
+import { useConfig } from '../../context/ConfigContext';
 
 // ── Inline SVG icons ──────────────────────────────────────────────────────────
 function GitHubIcon() {
@@ -69,7 +59,14 @@ function SocialLink({ href, label, icon }) {
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
-export function AboutWindow() {
+export function AboutWindow() {  const { config: cfg } = useConfig();
+  const name     = cfg.ownerName   || 'Oluwafemi Oyeniran';
+  const bio      = cfg.bio         || '';
+  const status   = cfg.status      || '';
+  const avatar   = cfg.avatarUrl   || '';
+  const github   = cfg.socialLinks?.github   || '';
+  const linkedin = cfg.socialLinks?.linkedin || '';
+  const twitter  = cfg.socialLinks?.twitter  || '';
   return (
     <div className="flex flex-col items-center justify-center h-full px-8 py-6 text-center gap-4">
 
@@ -79,18 +76,23 @@ export function AboutWindow() {
         animate={{ scale: 1,   opacity: 1 }}
         transition={{ delay: 0.05, duration: 0.25, ease: 'easeOut' }}
       >
-        <img
-          src={config.avatar}
-          alt={config.name}
-          width={80}
-          height={80}
-          className="w-20 h-20 rounded-full object-cover
-                     ring-2 ring-white/15 ring-offset-2 ring-offset-transparent"
-          onError={(e) => {
-            // Fallback to initials if image fails
-            e.currentTarget.style.display = 'none';
-          }}
-        />
+        {avatar ? (
+          <img
+            src={avatar}
+            alt={name}
+            width={80}
+            height={80}
+            className="w-20 h-20 rounded-full object-cover
+                       ring-2 ring-white/15 ring-offset-2 ring-offset-transparent"
+            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+          />
+        ) : (
+          <div className="w-20 h-20 rounded-full flex items-center justify-center
+                          text-white text-2xl font-semibold ring-2 ring-white/15"
+            style={{ background: 'var(--win-accent)' }}>
+            {name.split(' ').map((w) => w[0]).slice(0, 2).join('')}
+          </div>
+        )}
       </motion.div>
 
       {/* Name */}
@@ -101,7 +103,7 @@ export function AboutWindow() {
         className="text-white m-0"
         style={{ fontSize: 24, fontWeight: 500, lineHeight: 1.2 }}
       >
-        {config.name}
+        {name}
       </motion.h2>
 
       {/* Bio */}
@@ -119,7 +121,7 @@ export function AboutWindow() {
           overflow:        'hidden',
         }}
       >
-        {config.bio}
+        {bio}
       </motion.p>
 
       {/* Status badge */}
@@ -136,8 +138,8 @@ export function AboutWindow() {
                            rounded-full bg-green-400 opacity-75" />
           <span className="relative inline-flex rounded-full w-2 h-2 bg-green-500" />
         </span>
-        <span className="text-white/50 mr-0.5">Currently building:</span>
-        <span className="text-white/80 font-medium">{config.status}</span>
+        <span className="text-white/50 mr-0.5">Currently:</span>
+        <span className="text-white/80 font-medium">{status}</span>
       </motion.div>
 
       {/* Social links */}
@@ -147,9 +149,9 @@ export function AboutWindow() {
         transition={{ delay: 0.25, duration: 0.2 }}
         className="flex items-center gap-2 mt-1"
       >
-        <SocialLink href={config.github}   label="GitHub"   icon={<GitHubIcon />}   />
-        <SocialLink href={config.linkedin} label="LinkedIn" icon={<LinkedInIcon />} />
-        <SocialLink href={config.twitter}  label="Twitter"  icon={<TwitterIcon />}  />
+        {github   && <SocialLink href={github}   label="GitHub"   icon={<GitHubIcon />}   />}
+        {linkedin && <SocialLink href={linkedin} label="LinkedIn" icon={<LinkedInIcon />} />}
+        {twitter  && <SocialLink href={twitter}  label="Twitter"  icon={<TwitterIcon />}  />}
       </motion.div>
 
     </div>

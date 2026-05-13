@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { AnimatePresence }       from 'framer-motion';
 import { useWindow }             from '../../hooks/useWindow';
+import { useConfig }             from '../../context/ConfigContext';
 import { Z }                     from '../../utils/zIndex';
 import { DesktopIcon }           from './DesktopIcon';
 import { RightClickMenu }        from './RightClickMenu';
@@ -70,11 +71,13 @@ const ICONS = [
   { id: 'contact',  label: 'Contact',   icon: <MailIcon />     },
 ];
 
-// ── Component ─────────────────────────────────────────────────────────────────
-const WALLPAPER = 'https://picsum.photos/seed/win11/1920/1080';
+const FALLBACK_WALLPAPER = 'https://picsum.photos/seed/win11/1920/1080';
 
+// ── Component ─────────────────────────────────────────────────────
 export function Desktop() {
   const { openWindow } = useWindow();
+  const { config }     = useConfig();
+  const wallpaper      = config.wallpaper || FALLBACK_WALLPAPER;
   const [menu, setMenu] = useState(null); // { x, y } | null
 
   const handleContextMenu = useCallback((e) => {
@@ -89,7 +92,7 @@ export function Desktop() {
       className="fixed inset-0 overflow-hidden"
       style={{
         zIndex: Z.desktop,
-        backgroundImage: `url('${WALLPAPER}')`,
+        backgroundImage: `url('${wallpaper}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
