@@ -49,7 +49,12 @@ export function TaskbarIcon({ id, label, icon, isOpen, isFocused }) {
         ].join(' ')}
         title={label}
       >
-        <span className="text-white w-5 h-5">{icon}</span>
+        {icon
+          ? <span className="w-5 h-5 flex items-center justify-center">{icon}</span>
+          : <span className="text-white/70 text-[12px] font-medium select-none">
+              {label?.[0]?.toUpperCase() ?? '?'}
+            </span>
+        }
       </button>
 
       {/* Active indicator bar */}
