@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 
 import { WindowProvider }       from '../context/WindowContext';
@@ -36,6 +36,21 @@ function AppShortcuts() {
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [openWindow]);
+  return null;
+}
+
+// Welcome notification — fires once after config loads
+import { useConfig }        from '../context/ConfigContext';
+import { useNotification }  from '../context/NotificationContext';
+function AppInit() {
+  const { addNotification }    = useNotification();
+  const { config, loading }    = useConfig();
+  const fired = useRef(false);
+  useEffect(() => {
+    if (fired.current || loading) return;
+    fired.current = true;
+    addNotification(`Welcome to ${config.ownerName}'s portfolio`, 'info');
+  }, [loading, config.ownerName, addNotification]);
   return null;
 }
 
@@ -81,6 +96,9 @@ export default function App() {
 
         {/* Keyboard shortcuts (Ctrl+Shift+A → Admin) */}
         <AppShortcuts />
+
+        {/* Welcome notification on first config load */}
+        <AppInit />
 
         {/* Layer 4 – start menu overlay */}
         <StartMenu />

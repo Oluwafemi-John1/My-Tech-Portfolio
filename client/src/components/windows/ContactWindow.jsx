@@ -62,7 +62,7 @@ function validate({ name, email, subject, message }) {
 
 // ── Main component ────────────────────────────────────────────────────────────
 export function ContactWindow() {
-  const { addToast } = useNotification();
+  const { addNotification } = useNotification();
 
   const [fields, setFields]   = useState({ name: '', email: '', subject: '', message: '' });
   const [errors, setErrors]   = useState({});
@@ -89,9 +89,9 @@ export function ContactWindow() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setFields({ name: '', email: '', subject: '', message: '' });
       setErrors({});
-      addToast('Message sent!', 'success');
+      addNotification('Message sent successfully!', 'success');
     } catch {
-      addToast('Failed to send. Try again.', 'error');
+      addNotification('Failed to send. Try again.', 'error');
     } finally {
       setSending(false);
     }

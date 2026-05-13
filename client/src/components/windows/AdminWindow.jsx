@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNotification } from '../../context/NotificationContext';
 
 const API_BASE  = import.meta.env.VITE_API_URL ?? 'http://localhost:5000';
 const TOKEN_KEY = 'admin_token';
@@ -214,6 +215,7 @@ function ProjectModal({ project, onClose, onSaved }) {
 
 // ── Projects tab ──────────────────────────────────────────────────────────────
 function ProjectsTab() {
+  const { addNotification }    = useNotification();
   const [projects, setProjects] = useState([]);
   const [loading,  setLoading]  = useState(true);
   const [modal,    setModal]    = useState(null); // null | 'add' | projectObj
@@ -229,10 +231,12 @@ function ProjectsTab() {
   }, []);
 
   const handleSaved = (saved) => {
+    const isEdit = projects.some((p) => p._id === saved._id);
     setProjects((prev) => {
       const idx = prev.findIndex((p) => p._id === saved._id);
       return idx >= 0 ? prev.map((p) => (p._id === saved._id ? saved : p)) : [saved, ...prev];
     });
+    addNotification(isEdit ? `"${saved.title}" updated` : `"${saved.title}" added`, 'success');
     setModal(null);
   };
 
@@ -241,7 +245,11 @@ function ProjectsTab() {
     const res = await fetch(`${API_BASE}/api/projects/${id}`, {
       method: 'DELETE', headers: authHeaders(),
     });
-    if (res.ok) setProjects((p) => p.filter((x) => x._id !== id));
+    if (res.ok) {
+      const deleted = projects.find((p) => p._id === id);
+      setProjects((p) => p.filter((x) => x._id !== id));
+      addNotification(`"${deleted?.title ?? 'Project'}" deleted`, 'warning');
+    }
   };
 
   return (
@@ -317,6 +325,7 @@ function ProjectsTab() {
 
 // ── Config tab ────────────────────────────────────────────────────────────────
 function ConfigTab() {
+  const { addNotification }  = useNotification();
   const [form,    setForm]    = useState(null);
   const [saving,  setSaving]  = useState(false);
   const [message, setMessage] = useState('');
@@ -357,6 +366,7 @@ function ConfigTab() {
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setMessage('Saved!');
+      addNotification('Site config updated', 'success');
       setTimeout(() => setMessage(''), 3000);
     } catch (err) {
       setMessage(err.message);

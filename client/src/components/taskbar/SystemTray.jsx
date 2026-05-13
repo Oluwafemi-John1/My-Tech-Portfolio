@@ -1,4 +1,5 @@
-import { Clock } from './Clock';
+import { Clock }           from './Clock';
+import { useNotification } from '../../context/NotificationContext';
 
 // ── Inline SVG icons (static) ──────────────────────────────────
 function WifiIcon() {
@@ -35,6 +36,16 @@ function BatteryIcon() {
   );
 }
 
+function BellIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+    </svg>
+  );
+}
+
 // ── Component ──────────────────────────────────────────────
 const trayIcons = [
   { id: 'wifi',    Icon: WifiIcon    },
@@ -43,6 +54,8 @@ const trayIcons = [
 ];
 
 export function SystemTray() {
+  const { unreadCount, togglePanel } = useNotification();
+
   return (
     <div className="flex items-center h-full gap-1 pl-1 pr-2">
       {trayIcons.map(({ id, Icon }) => (
@@ -54,6 +67,23 @@ export function SystemTray() {
           <Icon />
         </button>
       ))}
+
+      {/* Bell — notification center toggle */}
+      <button
+        onClick={togglePanel}
+        className="relative flex items-center justify-center w-8 h-8 rounded
+                   text-white/80 hover:bg-white/10 transition-colors"
+        title="Notification Center"
+      >
+        <BellIcon />
+        {unreadCount > 0 && (
+          <span
+            className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 ring-2"
+            style={{ ringColor: 'transparent' }}
+          />
+        )}
+      </button>
+
       <Clock />
     </div>
   );
