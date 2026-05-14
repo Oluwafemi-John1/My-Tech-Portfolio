@@ -20,15 +20,29 @@ function applyTheme(mode, accent) {
   root.style.setProperty('--win-bg',     accent);
 
   if (mode === 'dark') {
-    root.style.setProperty('--win-taskbar', 'rgba(32, 32, 32, 0.85)');
-    root.style.setProperty('--win-glass',   'rgba(255, 255, 255, 0.08)');
-    root.style.setProperty('--win-border',  'rgba(255, 255, 255, 0.12)');
-    root.style.setProperty('--win-surface', 'rgba(32, 32, 32, 0.92)');
+    root.style.setProperty('--win-taskbar',   'rgba(32, 32, 32, 0.85)');
+    root.style.setProperty('--win-glass',     'rgba(255, 255, 255, 0.08)');
+    root.style.setProperty('--win-border',    'rgba(255, 255, 255, 0.12)');
+    root.style.setProperty('--win-surface',   'rgba(32, 32, 32, 0.92)');
+    root.style.setProperty('--win-surface-2', 'rgba(48, 48, 48, 0.80)');
+    root.style.setProperty('--win-hover',     'rgba(255, 255, 255, 0.08)');
+    root.style.setProperty('--win-text',      'rgba(255, 255, 255, 0.90)');
+    root.style.setProperty('--win-text-muted','rgba(255, 255, 255, 0.50)');
+    root.style.setProperty('--win-text-dim',  'rgba(255, 255, 255, 0.30)');
+    root.style.setProperty('--win-title-btn', 'rgba(255, 255, 255, 0.80)');
+    root.style.setProperty('--win-title-btn-hover', 'rgba(255, 255, 255, 0.10)');
   } else {
-    root.style.setProperty('--win-taskbar', 'rgba(243, 243, 243, 0.85)');
-    root.style.setProperty('--win-glass',   'rgba(255, 255, 255, 0.72)');
-    root.style.setProperty('--win-border',  'rgba(0, 0, 0, 0.10)');
-    root.style.setProperty('--win-surface', 'rgba(251, 251, 251, 0.90)');
+    root.style.setProperty('--win-taskbar',   'rgba(243, 243, 243, 0.85)');
+    root.style.setProperty('--win-glass',     'rgba(255, 255, 255, 0.72)');
+    root.style.setProperty('--win-border',    'rgba(0, 0, 0, 0.10)');
+    root.style.setProperty('--win-surface',   'rgba(243, 243, 243, 0.96)');
+    root.style.setProperty('--win-surface-2', 'rgba(225, 225, 225, 0.80)');
+    root.style.setProperty('--win-hover',     'rgba(0, 0, 0, 0.05)');
+    root.style.setProperty('--win-text',      'rgba(0, 0, 0, 0.87)');
+    root.style.setProperty('--win-text-muted','rgba(0, 0, 0, 0.50)');
+    root.style.setProperty('--win-text-dim',  'rgba(0, 0, 0, 0.30)');
+    root.style.setProperty('--win-title-btn', 'rgba(0, 0, 0, 0.75)');
+    root.style.setProperty('--win-title-btn-hover', 'rgba(0, 0, 0, 0.06)');
   }
 }
 

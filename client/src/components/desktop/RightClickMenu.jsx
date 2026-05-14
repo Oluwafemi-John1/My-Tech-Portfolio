@@ -5,12 +5,12 @@ const MENU_ITEMS = ['View', 'Refresh', 'Personalize'];
 
 /**
  * RightClickMenu
- * Props: { x, y, onClose }
+ * Props: { x, y, onClose, onPersonalize }
  *
  * Win11-style frosted-glass context menu.
  * Dismisses on outside click or Escape.
  */
-export function RightClickMenu({ x, y, onClose }) {
+export function RightClickMenu({ x, y, onClose, onPersonalize }) {
   const ref = useRef(null);
 
   useEffect(() => {
@@ -50,7 +50,16 @@ export function RightClickMenu({ x, y, onClose }) {
       {MENU_ITEMS.map((item, i) => (
         <button
           key={item}
-          onClick={onClose}
+          onClick={() => {
+            if (item === 'Personalize') {
+              onPersonalize?.();
+            } else if (item === 'Refresh') {
+              // visual flash to simulate refresh
+              document.documentElement.style.opacity = '0.6';
+              setTimeout(() => { document.documentElement.style.opacity = ''; }, 150);
+            }
+            onClose();
+          }}
           className="w-full text-left text-white/90 text-[12px] px-4 py-1.75
                      hover:bg-white/10 transition-colors rounded-sm"
         >

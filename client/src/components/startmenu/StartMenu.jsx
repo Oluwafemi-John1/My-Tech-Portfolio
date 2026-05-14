@@ -126,7 +126,7 @@ export function StartMenu() {
   }
 
   function handlePinnedClick(id) {
-    if (id !== 'settings') openWindow(id);
+    openWindow(id);
     toggleStart();
   }
 

@@ -40,6 +40,34 @@ const WINDOW_ICONS = {
       <polyline points="2,4 12,13 22,4" />
     </svg>
   ),
+  settings: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.8"
+      strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65
+        1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9
+        19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0
+        4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65
+        0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65
+        0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06
+        -.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2
+        2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+    </svg>
+  ),
+  settings: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.8"
+      strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65
+        1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9
+        19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0
+        4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65
+        0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65
+        0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06
+        -.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2
+        2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+    </svg>
+  ),
 };
 
 // ── Windows logo (4-pane) for the Start button ──────────────────
@@ -62,7 +90,7 @@ function WinLogo() {
  * Right:  SystemTray
  */
 export function Taskbar() {
-  const { windows, toggleStart } = useWindow();
+  const { windows, toggleStart, openWindow } = useWindow();
 
   return (
     <div
@@ -85,9 +113,26 @@ export function Taskbar() {
         <WinLogo />
       </button>
 
+      {/* ── Search bar button ─────────────────────────── */}
+      <button
+        onClick={() => openWindow('settings')}
+        className="flex items-center gap-2 mx-1 px-3 h-8 rounded transition-colors
+                   hover:bg-white/10"
+        style={{ minWidth: 180, border: '1px solid var(--win-border)' }}
+        title="Search"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"
+          strokeLinecap="round" strokeLinejoin="round"
+          className="w-4 h-4 shrink-0" style={{ color: 'var(--win-text-muted)' }}>
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <span className="text-[12px]" style={{ color: 'var(--win-text-muted)' }}>Search</span>
+      </button>
+
       {/* ── Open-window icons ──────────────────────────── */}
       <div className="flex-1 flex items-center justify-center gap-1">
-        {windows.filter((w) => w.id !== 'admin').map((w) => (
+        {windows.filter((w) => w.id !== 'admin' && w.id !== 'settings').map((w) => (
           <TaskbarIcon
             key={w.id}
             id={w.id}

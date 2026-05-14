@@ -2,10 +2,19 @@
 
 /* ── Windows 11 Design Tokens ────────────────────────────────────────── */
 :root {
-  --win-bg:       #0078D4;               /* taskbar / accent blue        */
-  --win-taskbar:  rgba(32, 32, 32, 0.85);/* frosted taskbar              */
-  --win-glass:    rgba(255, 255, 255, 0.08); /* glass surface tint       */
-  --win-border:   rgba(255, 255, 255, 0.12); /* glass border             */
+  --win-bg:              #0078D4;
+  --win-accent:          #0078D4;
+  --win-taskbar:         rgba(32, 32, 32, 0.85);
+  --win-glass:           rgba(255, 255, 255, 0.08);
+  --win-border:          rgba(255, 255, 255, 0.12);
+  --win-surface:         rgba(32, 32, 32, 0.92);
+  --win-surface-2:       rgba(48, 48, 48, 0.80);
+  --win-hover:           rgba(255, 255, 255, 0.08);
+  --win-text:            rgba(255, 255, 255, 0.90);
+  --win-text-muted:      rgba(255, 255, 255, 0.50);
+  --win-text-dim:        rgba(255, 255, 255, 0.30);
+  --win-title-btn:       rgba(255, 255, 255, 0.80);
+  --win-title-btn-hover: rgba(255, 255, 255, 0.10);
 
   /* typography */
   font-family: 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
@@ -31,3 +40,12 @@ body,
   height: 100%;
   overflow: hidden;
 }
+
+/* ── Thin Win11-style scrollbars ─────────────────────────────────── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--win-border) transparent;
+}
+*::-webkit-scrollbar        { width: 6px; height: 6px; }
+*::-webkit-scrollbar-track  { background: transparent; }
+*::-webkit-scrollbar-thumb  { background: var(--win-border); border-radius: 3px; }

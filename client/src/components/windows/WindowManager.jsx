@@ -7,6 +7,7 @@ import { ResumeWindow }     from './ResumeWindow';
 import { ProjectsWindow }   from './ProjectsWindow';
 import { ContactWindow }    from './ContactWindow';
 import { AdminWindow }      from './AdminWindow';
+import { SettingsWindow }   from './SettingsWindow';
 import { Z }                from '../../utils/zIndex';
 
 /**
@@ -19,6 +20,7 @@ const CONTENT_MAP = {
   projects: <ProjectsWindow />,
   contact:  <ContactWindow />,
   admin:    <AdminWindow />,
+  settings: <SettingsWindow />,
 };
 
 /**

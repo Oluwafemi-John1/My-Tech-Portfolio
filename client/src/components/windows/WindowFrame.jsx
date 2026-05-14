@@ -126,7 +126,7 @@ export function WindowFrame({ win, children }) {
         height:              win.size.height,
         zIndex:              win.zIndex,
         pointerEvents:       'auto',
-        background:          'rgba(32,32,32,0.92)',
+        background:          'var(--win-surface)',
         backdropFilter:      'blur(20px)',
         WebkitBackdropFilter:'blur(20px)',
         border:              '1px solid var(--win-border)',
@@ -158,11 +158,13 @@ export function WindowFrame({ win, children }) {
         {/* Left: icon + title */}
         <div className="flex items-center gap-2 min-w-0 overflow-hidden">
           {win.icon && (
-            <span className="w-4 h-4 shrink-0 flex items-center justify-center text-white">
+            <span className="w-4 h-4 shrink-0 flex items-center justify-center"
+              style={{ color: 'var(--win-title-btn)' }}>
               {win.icon}
             </span>
           )}
-          <span className="text-white/90 text-[13px] font-medium truncate">
+          <span className="text-[13px] font-medium truncate"
+            style={{ color: 'var(--win-text)' }}>
             {win.title}
           </span>
         </div>
@@ -175,8 +177,10 @@ export function WindowFrame({ win, children }) {
           {/* Minimize */}
           <button
             onClick={(e) => { e.stopPropagation(); minimizeWindow(win.id); }}
-            className="flex items-center justify-center w-11 h-10 text-white/80
-                       hover:bg-white/10 transition-colors"
+            className="flex items-center justify-center w-11 h-10 transition-colors"
+            style={{ color: 'var(--win-title-btn)' }}
+            onMouseEnter={(e) => e.currentTarget.style.background = 'var(--win-title-btn-hover)'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
             title="Minimize"
           >
             {/* — */}
@@ -186,8 +190,10 @@ export function WindowFrame({ win, children }) {
           {/* Maximize / Restore */}
           <button
             onClick={(e) => { e.stopPropagation(); maximizeWindow(win.id); }}
-            className="flex items-center justify-center w-11 h-10 text-white/80
-                       hover:bg-white/10 transition-colors"
+            className="flex items-center justify-center w-11 h-10 transition-colors"
+            style={{ color: 'var(--win-title-btn)' }}
+            onMouseEnter={(e) => e.currentTarget.style.background = 'var(--win-title-btn-hover)'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
             title={win.isMaximized ? 'Restore' : 'Maximize'}
           >
             {win.isMaximized ? (
@@ -210,8 +216,10 @@ export function WindowFrame({ win, children }) {
           {/* Close — red on hover */}
           <button
             onClick={(e) => { e.stopPropagation(); closeWindow(win.id); }}
-            className="flex items-center justify-center w-11 h-10 text-white/80
-                       hover:bg-[#e81123] hover:text-white transition-colors"
+            className="flex items-center justify-center w-11 h-10 transition-colors"
+            style={{ color: 'var(--win-title-btn)' }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = '#e81123'; e.currentTarget.style.color = '#fff'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--win-title-btn)'; }}
             title="Close"
           >
             <svg width="10" height="10" viewBox="0 0 10 10" fill="none">

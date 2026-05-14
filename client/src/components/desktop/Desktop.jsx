@@ -127,6 +127,7 @@ export function Desktop() {
             x={menu.x}
             y={menu.y}
             onClose={() => setMenu(null)}
+            onPersonalize={() => { openWindow('settings'); setMenu(null); }}
           />
         )}
       </AnimatePresence>
