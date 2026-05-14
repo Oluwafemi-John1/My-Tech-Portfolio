@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useWindow } from '../../hooks/useWindow';
 import { Z }         from '../../utils/zIndex';
@@ -34,23 +34,48 @@ const RECOMMENDED = [
   { id: 'r3', title: 'Admin Dashboard', subtitle: 'Angular · Laravel',       icon: <IconCode /> },
 ];
 
+const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:5000';
+
 // ── Shutdown screen ───────────────────────────────────────────────────────────
 function ShutdownScreen() {
+  const [gone, setGone] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setGone(true), 8000);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <div
-      className="fixed inset-0 bg-black flex flex-col items-center justify-center gap-4 select-none"
+      className="fixed inset-0 bg-black flex items-center justify-center select-none"
       style={{ zIndex: 9999 }}
     >
-      <span className="text-white/60 text-[13px] tracking-wide">
-        It&rsquo;s safe to turn off your computer.
-      </span>
-      <button
-        onClick={() => window.location.reload()}
-        className="mt-4 px-4 py-1.5 rounded-lg border border-white/15 text-white/40
-                   text-[11px] hover:border-white/30 hover:text-white/60 transition-colors"
+      <motion.div
+        className="flex flex-col items-center gap-5"
+        animate={{ opacity: gone ? 0 : 1 }}
+        transition={{ duration: 1 }}
       >
-        Restart
-      </button>
+        <p className="text-white text-[1rem] tracking-wide">
+          It&rsquo;s safe to turn off your computer.
+        </p>
+        {/* Spinning ring */}
+        <svg
+          className="animate-spin"
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.15)" strokeWidth="2.5"/>
+          <path
+            d="M12 2 a10 10 0 0 1 10 10"
+            stroke="rgba(255,255,255,0.7)"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+        </svg>
+      </motion.div>
     </div>
   );
 }
@@ -59,6 +84,46 @@ function ShutdownScreen() {
 export function StartMenu() {
   const { startMenuOpen, toggleStart, openWindow } = useWindow();
   const [powerState, setPowerState] = useState(null); // null | 'sleep' | 'shutdown'
+  const [query,      setQuery]      = useState('');
+  const [projects,   setProjects]   = useState([]);
+  const inputRef = useRef(null);
+
+  // Fetch projects once for Cortana search
+  useEffect(() => {
+    let active = true;
+    fetch(`${API_BASE}/api/projects`)
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data) => { if (active) setProjects(Array.isArray(data) ? data : []); })
+      .catch(() => {});
+    return () => { active = false; };
+  }, []);
+
+  // Auto-focus search when menu opens; clear query on close
+  useEffect(() => {
+    if (startMenuOpen) setTimeout(() => inputRef.current?.focus(), 60);
+    else setQuery('');
+  }, [startMenuOpen]);
+
+  // Computed search results
+  const lq             = query.trim().toLowerCase();
+  const appResults     = lq
+    ? PINNED_APPS.filter((a) => a.label.toLowerCase().includes(lq))
+    : [];
+  const projectResults = lq
+    ? projects.filter(
+        (p) =>
+          p.title?.toLowerCase().includes(lq) ||
+          (Array.isArray(p.techStack) &&
+            p.techStack.some((t) => t.toLowerCase().includes(lq)))
+      )
+    : [];
+  const hasResults = appResults.length > 0 || projectResults.length > 0;
+
+  function handleSearchResult(windowId) {
+    openWindow(windowId);
+    setQuery('');
+    toggleStart();
+  }
 
   function handlePinnedClick(id) {
     if (id !== 'settings') openWindow(id);
@@ -124,15 +189,96 @@ export function StartMenu() {
                                 bg-white/7 border border-white/8">
                   <IconSearch />
                   <input
+                    ref={inputRef}
                     type="text"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
                     placeholder="Search apps, files, settings..."
                     className="flex-1 bg-transparent text-white/70 text-[13px]
                                outline-none placeholder:text-white/30"
-                    readOnly
                   />
+                  {query && (
+                    <button
+                      onClick={() => setQuery('')}
+                      className="text-white/30 hover:text-white/60 transition-colors shrink-0"
+                      aria-label="Clear search"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        strokeWidth="2.5" strokeLinecap="round" className="w-3.5 h-3.5">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6"  y1="6" x2="18" y2="18"/>
+                      </svg>
+                    </button>
+                  )}
                 </div>
               </div>
 
+              {/* ── Cortana results (shown while searching) ── */}
+              {query && (
+                <div className="px-6 pb-4 border-t border-white/7 pt-3 max-h-72 overflow-y-auto">
+                  {appResults.length > 0 && (
+                    <>
+                      <p className="text-white/40 text-[10px] font-semibold uppercase tracking-wider mb-1.5">
+                        Apps
+                      </p>
+                      {appResults.map((app) => (
+                        <button
+                          key={app.id}
+                          onClick={() => handleSearchResult(app.id)}
+                          className="w-full flex items-center gap-3 px-2 py-2 rounded-lg
+                                     hover:bg-white/10 transition-colors"
+                        >
+                          <span className="shrink-0">{app.icon}</span>
+                          <span className="text-white/80 text-[13px]">{app.label}</span>
+                        </button>
+                      ))}
+                    </>
+                  )}
+
+                  {projectResults.length > 0 && (
+                    <>
+                      <p
+                        className={`text-white/40 text-[10px] font-semibold uppercase tracking-wider mb-1.5${
+                          appResults.length > 0 ? ' mt-3' : ''
+                        }`}
+                      >
+                        Projects
+                      </p>
+                      {projectResults.map((p) => (
+                        <button
+                          key={p._id ?? p.title}
+                          onClick={() => handleSearchResult('projects')}
+                          className="w-full flex items-center gap-2.5 px-2 py-2 rounded-lg
+                                     hover:bg-white/10 transition-colors"
+                        >
+                          <span className="w-6 h-6 flex items-center justify-center
+                                           bg-white/8 rounded-md text-white/50 shrink-0">
+                            <IconCode />
+                          </span>
+                          <div className="min-w-0 text-left">
+                            <div className="text-white/80 text-[12px] font-medium truncate">
+                              {p.title}
+                            </div>
+                            <div className="text-white/40 text-[10px] truncate">
+                              {Array.isArray(p.techStack) ? p.techStack.join(' · ') : ''}
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    </>
+                  )}
+
+                  {!hasResults && (
+                    <p className="text-white/35 text-[12px] py-2 text-center">
+                      No results for &ldquo;{query}&rdquo;
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* ── Pinned + Recommended (hidden while searching) ── */}
+              {!query && (
+                <>
               {/* ── Pinned ── */}
               <div className="px-6 pb-4">
                 <div className="flex items-center justify-between mb-3">
@@ -194,6 +340,8 @@ export function StartMenu() {
                   ))}
                 </div>
               </div>
+                </>
+              )}
 
               {/* Divider */}
               <div className="h-px bg-white/7" />
