@@ -34,7 +34,7 @@ const RECOMMENDED = [
   { id: 'r3', title: 'Admin Dashboard', subtitle: 'Angular · Laravel',       icon: <IconCode /> },
 ];
 
-const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:5000';
+const API_BASE = import.meta.env.VITE_API_URL ?? '';
 
 // ── Shutdown screen ───────────────────────────────────────────────────────────
 function ShutdownScreen() {

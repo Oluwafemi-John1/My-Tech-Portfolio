@@ -17,10 +17,14 @@ const app = express();
 connectDB();
 
 // ── Middleware ────────────────────────────────────────────────────────────────
-app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-}));
+const corsOptions = {
+  origin:         process.env.CLIENT_URL || 'http://localhost:5173',
+  methods:        ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials:    true,
+};
+app.options('*', cors(corsOptions)); // handle preflight before all routes
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Serve uploaded files

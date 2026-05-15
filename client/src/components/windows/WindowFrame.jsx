@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useLayoutEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useWindow } from '../../hooks/useWindow';
 
@@ -33,60 +33,106 @@ export function WindowFrame({ win, children }) {
     focusWindow, updatePosition, updateSize,
   } = useWindow();
 
-  // Holds the current drag or resize interaction state
-  const interactionRef = useRef(null);
+  // ── Drag / resize — all in refs, never touches React state during gesture ─────
+  const frameRef       = useRef(null);                      // direct DOM access
+  const interactionRef = useRef(null);                      // live gesture data
+  const listenersRef   = useRef({ move: null, up: null });  // stable handler refs
 
-  // Always-fresh reference to the action functions so the document
-  // event listener closure never goes stale
-  const actionsRef = useRef({});
-  actionsRef.current = { updatePosition, updateSize };
+  // Always-fresh action callbacks — listener closures never go stale
+  const actionsRef     = useRef({});
+  actionsRef.current   = { updatePosition, updateSize };
 
-  // Single pair of document listeners — mounted once per window frame
+  // After ANY React render that fires mid-drag (e.g. notification toast, theme
+  // change) re-stamp the accumulated live position so React doesn't snap the
+  // window back to the stale context value.
+  useLayoutEffect(() => {
+    if (!frameRef.current) return;
+    const el = frameRef.current;
+    // Always stamp z-index imperatively — Framer Motion caches the initial
+    // style.zIndex MotionValue and may not propagate context updates to the DOM.
+    el.style.zIndex = win.zIndex;
+    // During drag / resize: re-stamp accumulated live position so React doesn't
+    // snap the window back to the stale context value on unrelated re-renders.
+    const s = interactionRef.current;
+    if (!s) return;
+    if (s.liveX !== undefined) el.style.left   = `${s.liveX}px`;
+    if (s.liveY !== undefined) el.style.top    = `${s.liveY}px`;
+    if (s.liveW !== undefined) el.style.width  = `${s.liveW}px`;
+    if (s.liveH !== undefined) el.style.height = `${s.liveH}px`;
+  }); // intentionally no deps — must run after every render
+
+  // Belt-and-suspenders: remove listeners if the window unmounts mid-drag
   useEffect(() => {
-    function onMouseMove(e) {
-      const s = interactionRef.current;
-      if (!s) return;
+    return () => {
+      const { move, up } = listenersRef.current;
+      if (move) window.removeEventListener('mousemove', move);
+      if (up)   window.removeEventListener('mouseup',   up);
+    };
+  }, []);
 
+  // Called from onTitleMouseDown / onResizeMouseDown.
+  // Attaches window-level listeners; they are removed inside onMouseUp
+  // (and again on unmount above for safety).
+  function startDrag() {
+    const onMouseMove = (e) => {
+      const s = interactionRef.current;
+      if (!s || !frameRef.current) return;
+      const el = frameRef.current;
       const dx = e.clientX - s.startX;
       const dy = e.clientY - s.startY;
 
       if (s.type === 'drag') {
-        actionsRef.current.updatePosition(s.id, {
-          x: Math.max(0, s.pos0X + dx),
-          y: Math.max(0, s.pos0Y + dy),
-        });
+        // Mutate ref directly — zero React renders during drag
+        s.liveX = Math.max(0, s.pos0X + dx);
+        s.liveY = Math.max(0, s.pos0Y + dy);
+        el.style.left = `${s.liveX}px`;
+        el.style.top  = `${s.liveY}px`;
       } else {
-        // resize
         let nx = s.pos0X, ny = s.pos0Y;
         let nw = s.w0,    nh = s.h0;
-
         if (s.dir.includes('e')) { nw = Math.max(MIN_W, s.w0 + dx); }
         if (s.dir.includes('s')) { nh = Math.max(MIN_H, s.h0 + dy); }
-        if (s.dir.includes('w')) {
-          nw = Math.max(MIN_W, s.w0 - dx);
-          nx = s.pos0X + (s.w0 - nw);
-        }
-        if (s.dir.includes('n')) {
-          nh = Math.max(MIN_H, s.h0 - dy);
-          ny = s.pos0Y + (s.h0 - nh);
-        }
-
-        actionsRef.current.updatePosition(s.id, { x: nx, y: ny });
-        actionsRef.current.updateSize(s.id, { width: nw, height: nh });
+        if (s.dir.includes('w')) { nw = Math.max(MIN_W, s.w0 - dx); nx = s.pos0X + (s.w0 - nw); }
+        if (s.dir.includes('n')) { nh = Math.max(MIN_H, s.h0 - dy); ny = s.pos0Y + (s.h0 - nh); }
+        s.liveX = nx; s.liveY = ny; s.liveW = nw; s.liveH = nh;
+        el.style.left   = `${nx}px`;
+        el.style.top    = `${ny}px`;
+        el.style.width  = `${nw}px`;
+        el.style.height = `${nh}px`;
       }
-    }
-
-    function onMouseUp() {
-      interactionRef.current = null;
-    }
-
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup',   onMouseUp);
-    return () => {
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup',   onMouseUp);
     };
-  }, []); // mount once — reads only from refs
+
+    const onMouseUp = () => {
+      const s = interactionRef.current;
+      if (s) {
+        // One context update — triggers a single React render to sync state
+        actionsRef.current.updatePosition(s.id, {
+          x: s.liveX ?? s.pos0X,
+          y: s.liveY ?? s.pos0Y,
+        });
+        if (s.type === 'resize') {
+          actionsRef.current.updateSize(s.id, {
+            width:  s.liveW ?? s.w0,
+            height: s.liveH ?? s.h0,
+          });
+        }
+        interactionRef.current = null;
+      }
+      // Clean up immediately — cursor might be anywhere in the viewport
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup',   onMouseUp);
+      listenersRef.current = { move: null, up: null };
+    };
+
+    // Remove stale listeners before attaching fresh ones (guards double-click edge case)
+    const { move, up } = listenersRef.current;
+    if (move) window.removeEventListener('mousemove', move);
+    if (up)   window.removeEventListener('mouseup',   up);
+
+    listenersRef.current = { move: onMouseMove, up: onMouseUp };
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup',   onMouseUp);
+  }
 
   function onTitleMouseDown(e) {
     if (e.button !== 0 || win.isMaximized) return;
@@ -97,6 +143,7 @@ export function WindowFrame({ win, children }) {
       startX: e.clientX, startY: e.clientY,
       pos0X: win.position.x, pos0Y: win.position.y,
     };
+    startDrag();
   }
 
   function onResizeMouseDown(dir, e) {
@@ -110,13 +157,16 @@ export function WindowFrame({ win, children }) {
       pos0X: win.position.x, pos0Y: win.position.y,
       w0: win.size.width, h0: win.size.height,
     };
+    startDrag();
   }
 
   return (
     <motion.div
+      ref={frameRef}
       initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1,  transition: { duration: 0.15, ease: 'easeOut' } }}
-      exit={{    opacity: 0, scale: 0.95, transition: { duration: 0.12, ease: 'easeIn'  } }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.12, ease: 'easeIn' } }}
+      transition={{ duration: 0.15, ease: 'easeOut' }}
       onClick={() => focusWindow(win.id)}
       style={{
         position:            'absolute',

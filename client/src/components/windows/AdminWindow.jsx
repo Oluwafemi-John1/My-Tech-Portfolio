@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNotification } from '../../context/NotificationContext';
 
-const API_BASE  = import.meta.env.VITE_API_URL ?? 'http://localhost:5000';
+const API_BASE  = import.meta.env.VITE_API_URL ?? '';
 const TOKEN_KEY = 'admin_token';
 
 // ── Auth helpers ──────────────────────────────────────────────────────────────
