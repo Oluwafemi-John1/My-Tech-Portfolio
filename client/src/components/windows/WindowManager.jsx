@@ -7,8 +7,10 @@ import { ResumeWindow }     from './ResumeWindow';
 import { ProjectsWindow }   from './ProjectsWindow';
 import { ContactWindow }    from './ContactWindow';
 import { AdminWindow }      from './AdminWindow';
-import { SettingsWindow }   from './SettingsWindow';
-import { Z }                from '../../utils/zIndex';
+import { SettingsWindow }     from './SettingsWindow';
+import { MinesweeperWindow }  from './MinesweeperWindow';
+import { NotepadWindow }      from './NotepadWindow';
+import { Z }                  from '../../utils/zIndex';
 
 /**
  * CONTENT_MAP — maps window id → the JSX content rendered inside its frame.
@@ -19,8 +21,10 @@ const CONTENT_MAP = {
   resume:   <ResumeWindow />,
   projects: <ProjectsWindow />,
   contact:  <ContactWindow />,
-  admin:    <AdminWindow />,
-  settings: <SettingsWindow />,
+  admin:       <AdminWindow />,
+  settings:    <SettingsWindow />,
+  minesweeper: <MinesweeperWindow />,
+  notepad:     <NotepadWindow />,
 };
 
 /**

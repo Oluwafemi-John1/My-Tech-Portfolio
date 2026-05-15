@@ -13,8 +13,10 @@ export const WINDOW_REGISTRY = {
   skills:   { title: 'Skills.txt',  size: { width: 500, height: 420 } },
   resume:   { title: 'Resume.pdf',  size: { width: 560, height: 500 } },
   contact:  { title: 'Contact.lnk', size: { width: 480, height: 460 } },
-  admin:    { title: 'Admin Panel',  size: { width: 700, height: 520 } },
-  settings: { title: 'Settings',    size: { width: 680, height: 520 } },
+  admin:       { title: 'Admin Panel',  size: { width: 700, height: 520 } },
+  settings:    { title: 'Settings',    size: { width: 680, height: 520 } },
+  minesweeper: { title: 'Minesweeper', size: { width: 320, height: 380 } },
+  notepad:     { title: 'Notepad',     size: { width: 520, height: 400 } },
 };
 
 function makeWindow(id, title, icon, zIndex, cascade = 0, defaultSize = DEFAULT_SIZE) {
@@ -100,6 +102,11 @@ function reducer(state, action) {
         w.id === action.id ? { ...w, size: action.size } : w
       );
 
+    case 'UPDATE_TITLE':
+      return state.map((w) =>
+        w.id === action.id ? { ...w, title: action.title } : w
+      );
+
     default:
       return state;
   }
@@ -148,6 +155,9 @@ export function WindowProvider({ children }) {
   const updateSize = (id, size) =>
     dispatch({ type: 'UPDATE_SIZE', id, size });
 
+  const updateTitle = (id, title) =>
+    dispatch({ type: 'UPDATE_TITLE', id, title });
+
   const toggleStart = () => setStartMenuOpen((v) => !v);
 
   return (
@@ -155,7 +165,7 @@ export function WindowProvider({ children }) {
       value={{
         windows,
         openWindow, closeWindow, minimizeWindow, maximizeWindow,
-        focusWindow, updatePosition, updateSize,
+        focusWindow, updatePosition, updateSize, updateTitle,
         startMenuOpen, toggleStart,
       }}
     >
